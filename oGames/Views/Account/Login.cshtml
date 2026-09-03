@@ -1,0 +1,82 @@
+﻿@model oGames.Models.LoginViewModel
+@{
+  ViewData["Title"] = "Logowanie";
+}
+
+<h2 class="page-title">Strefa Użytkownika</h2>
+
+<div class="row g-4">
+
+  <div class="col-md-6">
+    <div class="card-soft h-100">
+      <h4 class="mb-3 border-bottom pb-2">Mam już konto</h4>
+
+      @* Wyświetlanie błędu logowania (np. złe hasło) *@
+      @if (ViewBag.Error != null)
+      {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+      }
+
+      <form asp-controller="Account" asp-action="Login" method="post">
+        @* Pole Login *@
+        <div class="mb-3">
+          <label class="form-label">Nazwa użytkownika</label>
+          <input asp-for="Username" class="form-control" placeholder="Wpisz login..." />
+          <span asp-validation-for="Username" class="text-danger small"></span>
+        </div>
+
+        @* Pole Hasło *@
+        <div class="mb-3">
+          <label class="form-label">Hasło</label>
+          <input asp-for="Password" type="password" class="form-control" placeholder="Wpisz hasło..." />
+          <span asp-validation-for="Password" class="text-danger small"></span>
+        </div>
+
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Zaloguj się</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card-soft h-100">
+      <h4 class="mb-3 border-bottom pb-2">Chcę założyć konto</h4>
+
+      @* Wyświetlanie błędu rejestracji (np. użytkownik istnieje) *@
+      @if (ViewBag.RegisterError != null)
+      {
+        <div class="alert alert-danger">@ViewBag.RegisterError</div>
+      }
+
+      <form asp-controller="Account" asp-action="Register" method="post" autocomplete="off">
+        @* Login *@
+        <div class="mb-3">
+          <label class="form-label">Wybierz login</label>
+          <input name="Username" class="form-control" placeholder="Np. Gracz123" required minlength="3" />
+          <div class="form-text text-muted">Minimum 3 znaki.</div>
+        </div>
+
+        @* Hasło *@
+        <div class="mb-3">
+          <label class="form-label">Hasło</label>
+          <input name="Password" type="password" class="form-control" placeholder="Minimum 6 znaków" required minlength="6" />
+        </div>
+
+        @* Powtórz hasło *@
+        <div class="mb-3">
+          <label class="form-label">Powtórz hasło</label>
+          <input name="ConfirmPassword" type="password" class="form-control" placeholder="Wpisz ponownie hasło" required />
+        </div>
+
+        <div class="mt-4">
+          <button type="submit" class="btn btn-success w-100 py-2 fw-bold">Zarejestruj się</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

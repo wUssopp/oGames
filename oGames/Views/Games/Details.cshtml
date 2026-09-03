@@ -1,0 +1,244 @@
+﻿@model oGames.Models.Game
+@using Microsoft.AspNetCore.Http
+
+@{
+  ViewData["Title"] = Model.Title;
+
+  var userId = Context.Session.GetInt32("UserId");
+  var isAdmin = string.Equals(Context.Session.GetString("Role"), "admin", StringComparison.OrdinalIgnoreCase);
+
+  // Obliczamy średnią ocenę (zabezpieczenie przed dzieleniem przez zero)
+  var avg = Model.Reviews.Any() ? Model.Reviews.Average(r => r.Rating) : 0;
+
+  // Czy user już ocenił?
+  bool userHasReviewed = false;
+  if (userId != null)
+  {
+    userHasReviewed = Model.Reviews.Any(r => r.UserId == userId.Value);
+  }
+}
+
+<h2 class="page-title">@Model.Title</h2>
+
+@* Komunikat błędu *@
+@if (TempData["ReviewError"] != null)
+{
+  <div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    @TempData["ReviewError"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+}
+
+@* 1. GALERIA ZDJĘĆ *@
+@if (ViewBag.Images != null && ((List<string>)ViewBag.Images).Any())
+{
+  var imgs = (List<string>)ViewBag.Images;
+  // Oczyszczanie ścieżki do folderu
+  var baseDir = (Model.ImageDir ?? "").Trim().TrimEnd('/').TrimStart('/');
+  var urls = imgs.Select(x => Url.Content($"~/{baseDir}/{x}")).ToList();
+
+  <div class="card-soft mb-3">
+    @* Główny podgląd *@
+    <div class="g-stage">
+      <button type="button" class="g-btn" data-action="prev" aria-label="Poprzednie">‹</button>
+      <div class="g-frame" data-bs-toggle="modal" data-bs-target="#galleryModal">
+        <img id="gMain" class="g-main" src="@urls[0]" alt="@Model.Title" />
+      </div>
+      <button type="button" class="g-btn" data-action="next" aria-label="Następne">›</button>
+    </div>
+
+    @* Miniaturki *@
+    <div class="g-thumbs mt-3" id="gThumbs">
+      @for (int i = 0; i < urls.Count; i++)
+      {
+        <button type="button" class="g-thumbBtn @(i==0 ? "active" : "")" data-index="@i">
+          <span class="g-thumbFrame">
+            <img class="g-thumbImg" src="@urls[i]" alt="Miniatura @(i+1)" />
+          </span>
+        </button>
+      }
+    </div>
+  </div>
+
+  @* Modal (Powiększenie galerii) *@
+  <div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content g-modal">
+        <div class="modal-body p-2">
+          <div class="d-flex justify-content-between align-items-center px-2 pt-2">
+            <div class="text-muted">Podgląd: <span id="gCounter"></span></div>
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+          </div>
+          <div class="g-lightbox mt-2">
+            <button type="button" class="g-btn" data-action="prev" aria-label="Poprzednie">‹</button>
+            <div class="g-frame g-frame--modal">
+              <img id="gLightboxImg" class="g-lightbox-img" alt="Podgląd" />
+            </div>
+            <button type="button" class="g-btn" data-action="next" aria-label="Następne">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @section Scripts {
+    <script>
+      // Przekazanie listy zdjęć do skryptu JS
+      window.GalleryImages = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(urls));
+    </script>
+    <script src="~/js/Gallery.js" asp-append-version="true"></script>
+  }
+}
+else if (!string.IsNullOrEmpty(Model.ImageDir))
+{
+  <p class="text-muted ms-1">Brak zdjęć w folderze.</p>
+}
+
+
+@* 2. GŁÓWNE INFORMACJE O GRZE *@
+<div class="card-soft mt-3">
+
+  @* Cena i Ocena *@
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+    <div>
+      <div class="text-muted">Cena</div>
+      <div style="font-size:1.5rem;"><strong>@Model.Price.ToString("0.00")</strong> PLN</div>
+    </div>
+
+    <div class="text-end">
+      <div class="text-muted">Ocena graczy</div>
+      <div style="font-size:1.5rem; color: #ffc107;">
+        ★ <strong>@avg.ToString("0.0")</strong> <span class="text-muted" style="font-size:1rem">/ 5 (@Model.Reviews.Count opinii)</span>
+      </div>
+    </div>
+  </div>
+
+  @* Przycisk Dodaj do koszyka *@
+  <form asp-controller="Cart" asp-action="Add" method="post" class="mb-4">
+    <input type="hidden" name="gameId" value="@Model.Id" />
+    <button class="btn btn-success w-100 p-3" style="font-size:1.2rem; font-weight:bold;">
+      Dodaj do koszyka
+    </button>
+  </form>
+
+  @* Opisy *@
+  @if (!string.IsNullOrEmpty(Model.Description))
+  {
+    <hr class="my-3" style="border-color: rgba(255,255,255,.10);" />
+    <div class="text-muted mb-1">Krótki opis</div>
+    <div class="fs-5">@Model.Description</div>
+  }
+
+  @if (!string.IsNullOrEmpty(Model.LongDescription))
+  {
+    <hr class="my-3" style="border-color: rgba(255,255,255,.10);" />
+    <h4 class="mb-2">Szczegóły gry</h4>
+    <p class="mb-0 text-muted" style="line-height: 1.6;">@Model.LongDescription</p>
+  }
+</div>
+
+
+@* 3. SEKCJA DODAWANIA RECENZJI *@
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-5 mb-2">
+  <h3 class="mb-0">Recenzje użytkowników</h3>
+</div>
+
+<div class="card-soft">
+  @if (userId == null)
+  {
+    <p class="text-muted mb-0">
+      <a asp-controller="Account" asp-action="Login" class="text-link">Zaloguj się</a>, aby dodać opinię.
+    </p>
+  }
+  else
+  {
+    <form asp-controller="Games" asp-action="AddReview" method="post" class="mb-0">
+      <input type="hidden" name="gameId" value="@Model.Id" />
+
+      <div class="row g-2 align-items-end">
+        <div class="col-sm-3 col-md-2">
+          <label class="form-label">Twoja ocena</label>
+          <select name="rating" class="form-select">
+            <option value="5">5 - Super</option>
+            <option value="4">4 - Dobra</option>
+            <option value="3">3 - Średnia</option>
+            <option value="2">2 - Słaba</option>
+            <option value="1">1 - Fatalna</option>
+          </select>
+        </div>
+
+        <div class="col-sm-9 col-md-8">
+          <label class="form-label">Opinia</label>
+          <input type="text" name="content" class="form-control" placeholder="Napisz co sądzisz o grze..." required minlength="2" />
+        </div>
+
+        <div class="col-md-2 d-grid">
+          <button type="submit" class="btn btn-primary">Wyślij</button>
+        </div>
+      </div>
+    </form>
+  }
+</div>
+
+
+@* 4. LISTA RECENZJI *@
+@if (Model.Reviews.Any())
+{
+  <div class="card-soft mt-3">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <tbody>
+          @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt ?? DateTime.MinValue))
+          {
+            <tr>
+              <td style="width:200px;">
+                <div class="fw-bold">
+                  @* Link do profilu - zostawiony bez zmian zgodnie z instrukcją *@
+                  <a class="text-link" asp-controller="Profile" asp-action="Profile" asp-route-id="@review.UserId">
+                    @review.User.Username
+                  </a>
+                </div>
+                <div class="text-warning small">
+                  @for (int i = 0; i < review.Rating; i++)
+                  {
+                    <span>★</span>
+                  }
+                  <span class="text-muted">(@review.Rating/5)</span>
+                </div>
+                <div class="text-muted small" style="font-size: 0.75em;">
+                  Dodano: @(review.CreatedAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")
+                </div>
+              </td>
+              <td>
+                @review.Content
+              </td>
+              <td class="text-end" style="width: 100px;">
+                @* Przycisk usuwania dla autora lub admina *@
+                @if (userId != null && (review.UserId == userId.Value || isAdmin))
+                {
+                  <form asp-controller="Games" asp-action="DeleteReview" method="post" style="display:inline;"
+                        onsubmit="return confirm('Usunąć tę recenzję?');">
+                    <input type="hidden" name="id" value="@review.Id" />
+                    <input type="hidden" name="gameId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-sm btn-danger">Usuń</button>
+                  </form>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}
+else
+{
+  <div class="card-soft mt-3">
+    <p class="mb-0 text-muted">Brak recenzji dla tej gry. Bądź pierwszy!</p>
+  </div>
+}
+
+<div class="mt-3">
+  <a asp-controller="Games" asp-action="List" class="btn btn-secondary">Wróć do listy gier</a>
+</div>

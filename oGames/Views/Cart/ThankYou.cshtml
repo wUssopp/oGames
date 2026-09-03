@@ -1,0 +1,16 @@
+﻿@{
+  ViewData["Title"] = "Dziękujemy";
+}
+
+@* 1. NAGŁÓWEK STRONY *@
+<h2 class="page-title mb-4">Dziękujemy!</h2>
+
+@* 2. KOMUNIKAT POTWIERDZAJĄCY *@
+<div class="card-soft">
+  <p class="mb-4">Gry zostały pomyślnie dodane do Twojej biblioteki.</p>
+
+  <div class="d-flex gap-2">
+    <a class="btn btn-primary" asp-controller="Games" asp-action="List">Wróć do sklepu</a>
+    <a class="btn btn-secondary" asp-controller="Profile" asp-action="Profile">Przejdź do profilu</a>
+  </div>
+</div>

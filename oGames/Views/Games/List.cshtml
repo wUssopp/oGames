@@ -1,0 +1,94 @@
+﻿@model List<oGames.Models.Game>
+
+@{
+  ViewData["Title"] = "Lista gier";
+}
+
+@* 1. NAGŁÓWEK STRONY *@
+<h2 class="page-title mb-4">Gry w oGames (@Model.Count)</h2>
+
+<div class="card-soft">
+
+  @* 2. PASEK NARZĘDZI (SORTOWANIE I SZUKANIE) *@
+  <div class="d-flex align-items-center gap-2 flex-wrap mb-4">
+
+    @* Dropdown sortowania (JS korzysta z data-sort-table) *@
+    <label for="sortGames" class="text-muted mb-0">Sortuj:</label>
+    <select id="sortGames" class="form-select" style="max-width: 250px;" data-sort-table="#gamesTable">
+      <option value="default">Domyślne</option>
+      <option value="rating">Ocena: Najwyższa</option>
+      <option value="price-asc">Cena: Rosnąco</option>
+      <option value="price-desc">Cena: Malejąco</option>
+      <option value="title-asc">Alfabetycznie</option>
+    </select>
+
+    @* Pole wyszukiwania (JS korzysta z data-table-filter) *@
+    <input class="form-control ms-auto"
+           style="max-width: 300px;"
+           placeholder="Szukaj gry..."
+           data-table-filter="#gamesTable" />
+  </div>
+
+  @* 3. LISTA GIER (TABELA) *@
+  <div class="table-responsive">
+    <table class="table align-middle mb-0" id="gamesTable">
+      <thead>
+        <tr>
+          <th>Tytuł</th>
+          <th>Ocena</th>
+          <th>Cena</th>
+          <th>Opis</th>
+          <th class="text-end" style="min-width: 200px;">Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var game in Model)
+        {
+          // Obliczenia dla sortowania i wyswietlania
+          var avg = game.Reviews.Any() ? game.Reviews.Average(r => r.Rating) : 0;
+          var reviewCount = game.Reviews.Count;
+
+          // WAŻNE: Atrybuty data-... sa uzywane przez JavaScript do sortowania
+          <tr data-id="@game.Id"
+              data-title="@game.Title"
+              data-price="@game.Price"
+              data-rating="@avg"
+              data-reviews="@reviewCount">
+
+            <td>
+              <a class="text-link fw-bold" asp-controller="Games" asp-action="Details" asp-route-id="@game.Id">
+                @game.Title
+              </a>
+            </td>
+
+            <td>
+              <span style="color: gold;">★</span> @avg.ToString("0.0")/5
+              <span class="text-muted small">(@reviewCount)</span>
+            </td>
+
+            <td class="fw-bold">
+              @game.Price.ToString("0.00") PLN
+            </td>
+
+            <td class="small text-muted text-truncate" style="max-width: 250px;">
+              @game.Description
+            </td>
+
+            <td class="text-end">
+              @* Przycisk Szczegóły *@
+              <a asp-action="Details" asp-route-id="@game.Id" class="btn btn-sm btn-primary">
+                Szczegóły
+              </a>
+
+              @* Formularz Dodaj do koszyka *@
+              <form asp-controller="Cart" asp-action="Add" method="post" style="display:inline;">
+                <input type="hidden" name="gameId" value="@game.Id" />
+                <button type="submit" class="btn btn-sm btn-success ms-1">Do koszyka</button>
+              </form>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

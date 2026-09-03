@@ -1,0 +1,51 @@
+﻿@{
+  ViewData["Title"] = "Panel administratora";
+}
+
+@* 1. NAGLOWEK STRONY *@
+<h2 class="page-title mb-4">Panel administratora</h2>
+
+@* 2. MENU ADMINISTRACYJNE (KAFELKI) *@
+<div class="row g-4">
+
+  @* Modul: Zarzadzanie grami *@
+  <div class="col-md-6">
+    <div class="card-soft h-100 text-center p-4">
+
+      <div class="mb-3 text-primary">
+        <i class="bi bi-controller display-4"></i>
+      </div>
+
+      <h4 class="fw-bold">Gry</h4>
+      <p class="text-muted mb-4">
+        Przeglądaj katalog, dodawaj nowe tytuły, edytuj ceny i opisy lub usuwaj gry ze sklepu.
+      </p>
+
+      @* Link prowadzi do AdminGamesController *@
+      <a class="btn btn-primary w-100 py-2" asp-controller="AdminGames" asp-action="AdminGames">
+        Zarządzaj grami
+      </a>
+    </div>
+  </div>
+
+  @* Modul: Zarzadzanie uzytkownikami *@
+  <div class="col-md-6">
+    <div class="card-soft h-100 text-center p-4">
+
+      <div class="mb-3 text-primary">
+        <i class="bi bi-people-fill display-4"></i>
+      </div>
+
+      <h4 class="fw-bold">Użytkownicy</h4>
+      <p class="text-muted mb-4">
+        Zarządzaj kontami użytkowników, sprawdzaj ich role i usuwaj konta w razie potrzeby.
+      </p>
+
+      @* Link prowadzi do AdminUsersController *@
+      <a class="btn btn-primary w-100 py-2" asp-controller="AdminUsers" asp-action="AdminUsers">
+        Lista użytkowników
+      </a>
+    </div>
+  </div>
+
+</div>

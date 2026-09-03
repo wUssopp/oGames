@@ -1,0 +1,61 @@
+﻿@model oGames.Models.Game
+
+@{
+  ViewData["Title"] = "Dodaj nową grę";
+}
+
+@* 1. NAGŁÓWEK STRONY *@
+<h2 class="page-title">Dodaj grę</h2>
+
+@* 2. FORMULARZ DODAWANIA GRY *@
+<div class="card-soft">
+  <form asp-controller="AdminGames" asp-action="AdminGamesCreate" method="post">
+
+    @* Zbiorcze wyświetlanie błędów *@
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+      <label asp-for="Title" class="form-label">Tytuł gry</label>
+      <input asp-for="Title" class="form-control" placeholder="Np. Wiedźmin 3: Dziki Gon" />
+      <span asp-validation-for="Title" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+      <label asp-for="Price" class="form-label">Cena (PLN)</label>
+      <input asp-for="Price" type="number" step="0.01" class="form-control" placeholder="0.00" />
+      <span asp-validation-for="Price" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+      <label asp-for="Description" class="form-label">Krótki opis (na listę)</label>
+      <input asp-for="Description" class="form-control" placeholder="Jedno zdanie zachęcające..." />
+      <span asp-validation-for="Description" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+      <label asp-for="LongDescription" class="form-label">Pełny opis</label>
+      <textarea asp-for="LongDescription" class="form-control" rows="6" placeholder="Szczegółowy opis fabuły i rozgrywki..."></textarea>
+      <span asp-validation-for="LongDescription" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-4">
+      <label asp-for="ImageDir" class="form-label">Ścieżka do zdjęć (w wwwroot)</label>
+      <div class="input-group">
+        <input asp-for="ImageDir" class="form-control" placeholder="img/folder-gry" />
+      </div>
+      <div class="form-text">Upewnij się, że taki folder istnieje na serwerze i zawiera pliki .jpg/.png</div>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary px-4" type="submit">Zapisz grę</button>
+      <a class="btn btn-secondary px-4" asp-controller="AdminGames" asp-action="AdminGames">Anuluj</a>
+    </div>
+  </form>
+</div>
+
+@* 3. SKRYPTY WALIDACJI (Client-Side) *@
+@section Scripts {
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
+}

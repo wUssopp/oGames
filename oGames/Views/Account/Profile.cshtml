@@ -1,0 +1,98 @@
+﻿@model List<oGames.Models.OwnedGame>
+
+@{
+  ViewData["Title"] = "Profil użytkownika";
+}
+
+@* 1. NAGŁÓWEK PROFILU (DANE UZYTKOWNIKA) *@
+<div class="card-soft mb-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+    @* Lewa strona: Nazwa i Rola *@
+    <div>
+      @if (ViewBag.IsMyProfile)
+      {
+        <h2 class="mb-1 text-primary">Twój profil</h2>
+        <div class="fs-5">@ViewBag.ProfileUsername</div>
+      }
+      else
+      {
+        <h2 class="mb-1">Profil użytkownika</h2>
+        <div class="fs-5 text-muted">@ViewBag.ProfileUsername</div>
+      }
+
+      @* Jeśli to admin, pokaż czerwoną odznakę *@
+      @if (ViewBag.ProfileRole == "ADMIN")
+      {
+        <span class="badge bg-danger mt-2">ADMINISTRATOR</span>
+      }
+    </div>
+
+    @* Prawa strona: Licznik posiadanych gier *@
+    <div class="text-center border-start ps-4 pe-2">
+      <div class="display-6 fw-bold text-success">@Model.Count</div>
+      <div class="small text-uppercase text-muted">Posiadane Gry</div>
+    </div>
+  </div>
+</div>
+
+@* 2. BIBLIOTEKA GIER (LISTA ZAKUPIONYCH TYTUŁÓW) *@
+<h4 class="mb-3">Biblioteka gier</h4>
+
+<div class="card-soft">
+  @if (!Model.Any())
+  {
+    <p class="text-muted mb-0 p-2">Ten użytkownik nie posiada jeszcze żadnych gier.</p>
+  }
+  else
+  {
+    @* Filtr wyszukiwania (Client-side via site.js) *@
+    <input class="form-control mb-3"
+           style="max-width: 400px;"
+           placeholder="Szukaj w bibliotece..."
+           data-table-filter="#profileTable" />
+
+    <div class="table-responsive">
+      <table class="table align-middle mb-0" id="profileTable">
+        <thead>
+          <tr>
+            <th>Gra</th>
+            <th style="width: 150px;">Data zakupu</th>
+            <th style="width: 150px;" class="text-end">Akcja</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var og in Model)
+          {
+            <tr>
+              <td>
+                <a class="text-link fw-bold fs-5"
+                   asp-controller="Games"
+                   asp-action="Details"
+                   asp-route-id="@og.GameId">
+                  @og.Game.Title
+                </a>
+                <div class="text-muted small text-truncate" style="max-width: 450px;">
+                  @og.Game.Description
+                </div>
+              </td>
+
+              <td class="text-muted">
+                @(og.PurchasedAt?.ToString("yyyy-MM-dd") ?? "-")
+              </td>
+
+              <td class="text-end">
+                <a class="btn btn-sm btn-primary"
+                   asp-controller="Games"
+                   asp-action="Details"
+                   asp-route-id="@og.GameId">
+                  Graj
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,91 @@
+﻿@model List<oGames.Models.CartItem>
+
+@{
+  ViewData["Title"] = "Koszyk";
+}
+
+@* 1. NAGŁÓWEK STRONY *@
+<h2 class="page-title mb-4">Twój koszyk</h2>
+
+@* --- KOMUNIKATY BŁĘDÓW (Duplikaty gier) --- *@
+@if (TempData["CartError"] != null)
+{
+  <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+    <i class="bi bi-exclamation-octagon-fill me-2"></i>
+    @TempData["CartError"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+}
+
+@* 2. LISTA ZAKUPÓW I PODSUMOWANIE *@
+<div class="card-soft">
+  @if (!Model.Any())
+  {
+    <div class="text-center p-4">
+      <h4 class="text-muted mb-3">Twój koszyk jest pusty.</h4>
+      <a class="btn btn-primary" asp-controller="Games" asp-action="List">Wróć do sklepu</a>
+    </div>
+  }
+  else
+  {
+    <div class="table-responsive">
+      <table class="table align-middle mb-4">
+        <thead>
+          <tr>
+            <th>Tytuł gry</th>
+            <th style="width: 150px;">Cena</th>
+            <th style="width: 100px;" class="text-end">Akcja</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var item in Model)
+          {
+            <tr>
+              <td>
+                <a class="text-link fw-bold" asp-controller="Games" asp-action="Details" asp-route-id="@item.GameId">
+                  @item.Title
+                </a>
+              </td>
+              <td class="text-success fw-bold">
+                @item.Price.ToString("0.00") PLN
+              </td>
+              <td class="text-end">
+                <form asp-controller="Cart" asp-action="Remove" method="post">
+                  <input type="hidden" name="gameId" value="@item.GameId" />
+                  @* Zmieniłem na btn-danger (pełny kolor), zamiast outline *@
+                  <button class="btn btn-sm btn-danger" type="submit">Usuń</button>
+                </form>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @* Sekcja podsumowania (Suma + Przyciski) *@
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 border-top pt-3">
+
+      @* Lewa strona: Suma *@
+      <div>
+        <span class="text-muted me-2">Łączna kwota:</span>
+        <span class="h4 text-success fw-bold mb-0">@ViewBag.Total.ToString("0.00") PLN</span>
+      </div>
+
+      @* Prawa strona: Przyciski akcji *@
+      <div class="d-flex gap-2">
+        @* 1. Wroc do sklepu *@
+        <a class="btn btn-outline-secondary" asp-controller="Games" asp-action="List">Kontynuuj zakupy</a>
+
+        @* 2. Wyczysc koszyk *@
+        <form asp-controller="Cart" asp-action="Clear" method="post" onsubmit="return confirm('Czy na pewno chcesz opróżnić koszyk?');">
+          <button class="btn btn-secondary" type="submit">Wyczyść</button>
+        </form>
+
+        @* 3. Finalizacja (Kup teraz) *@
+        <form asp-controller="Cart" asp-action="Checkout" method="post">
+          <button class="btn btn-success px-4 fw-bold" type="submit">Kup teraz</button>
+        </form>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,449 @@
+/* ============================================================
+   1. ZMIENNE (COLORS & TOKENS)
+   ============================================================ */
+:root {
+  /* --- Kolory bazowe (HEX) --- */
+  --bg1: #0b1020; /* G³ówny, najciemniejszy kolor t³a */
+  --bg2: #121a33; /* Drugi odcieñ t³a (gradient) */
+  --text: #e8ecff; /* G³ówny kolor tekstu (z³amana biel) */
+  --accent: #2d6bff; /* G³ówny kolor akcentowy (niebieski) */
+  /* --- Kolory bazowe (RGB Triplet) --- 
+       U¿ywane do funkcji rgba(), np. rgba(var(--bg1-rgb), 0.5) 
+       Pozwala to na ³atw¹ zmianê przezroczystoœci tego samego koloru. */
+  --bg1-rgb: 11, 16, 32;
+  --bg2-rgb: 18, 26, 51;
+  --text-rgb: 232, 236, 255;
+  --accent-rgb: 45, 107, 255;
+  --violet-rgb: 144, 76, 255;
+  /* --- Poziomy przezroczystoœci (Alpha Tokens) --- */
+  --card-a: .06; /* T³o kart */
+  --cardBorder-a: .10; /* Ramki kart i sekcji */
+  --shadow-a: .25; /* Cienie pod elementami */
+  --nav-a: .65; /* T³o navbara (szk³o) */
+  --footer-a: .35; /* T³o stopki */
+  --modal-a: .85; /* T³o modala galerii */
+  --table-border-a: .10; /* Linie w tabeli */
+  --muted-a: .70; /* Tekst drugoplanowy */
+  /* Linki w nawigacji */
+  --navlink-a: .82;
+  --navuser-a: .92;
+  /* Stopka */
+  --footerText-a: .65;
+  --footerLink-a: .80;
+  /* Galeria */
+  --g-frame-bg-a: .20;
+  --g-btn-bg-a: .55;
+  --g-btn-border-a: .15;
+  --g-btn-text-a: .95;
+  --g-thumb-idle-a: .65; /* Nieaktywna miniaturka */
+  /* Formularze (Inputy) */
+  --field-bg-a: .45;
+  --field-bg-focus-a: .55;
+  --field-border-a: .14;
+  --field-placeholder-a: .55;
+  --field-autofill-a: .65; /* Hack na t³o autofill */
+  /* Interakcje i obramowania */
+  --outline-primary-border-a: .55;
+  --outline-primary-hover-bg-a: .18;
+  --link-hover-bg-a: .14;
+  --link-hover-ring-a: .22;
+  /* --- Efekty sta³e --- */
+  --card-radius: 18px; /* Zaokr¹glenie kart */
+  --btn-radius: 12px; /* Zaokr¹glenie przycisków */
+  /* Poœwiaty w tle strony */
+  --accent-glow-a: .25;
+  --violet-glow-a: .18;
+}
+
+
+/* ============================================================
+   2. GLOBALNE STYLE (BODY & HTML)
+   ============================================================ */
+html, body {
+  min-height: 100%;
+}
+
+html {
+  /* Z³o¿one t³o: 
+       1. Niebieska poœwiata (radial)
+       2. Fioletowa poœwiata (radial)
+       3. Liniowy gradient t³a (od góry do do³u) */
+  background: radial-gradient(1200px 600px at 20% 10%, rgba(var(--accent-rgb), var(--accent-glow-a)), transparent 60%), radial-gradient(900px 500px at 80% 30%, rgba(var(--violet-rgb), var(--violet-glow-a)), transparent 60%), linear-gradient(160deg, var(--bg1), var(--bg2));
+  /* Fix: zapobiega powtarzaniu t³a przy scrollowaniu */
+  background-attachment: fixed;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: transparent; /* T³o jest na html, body jest przezroczyste */
+  min-height: 100vh;
+}
+
+  /* --- Sticky Footer (Stopka przyklejona do do³u) --- */
+  /* Wymaga klasy d-flex flex-column min-vh-100 na body */
+  body > main {
+    flex: 1 0 auto; /* Rozpycha treœæ, spychaj¹c stopkê w dó³ */
+  }
+
+  body > footer {
+    flex: 0 0 auto;
+  }
+
+/* Kontener g³ówny aplikacji */
+.app-shell {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 18px;
+}
+
+
+/* ============================================================
+   3. KOMPONENTY UI (Karty, Typografia, Tabele)
+   ============================================================ */
+
+/* Karta z efektem "Glassmorphism" */
+.card-soft {
+  background: rgba(255,255,255, var(--card-a));
+  border: 1px solid rgba(255,255,255, var(--cardBorder-a));
+  border-radius: var(--card-radius);
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0, var(--shadow-a));
+  backdrop-filter: blur(6px); /* Rozmycie t³a pod kart¹ */
+}
+
+/* Typografia */
+h1, h2, h3, h4 {
+  letter-spacing: .2px;
+}
+
+.page-title {
+  margin: 8px 0 18px;
+  font-weight: 700;
+}
+
+/* Nadpisanie klasy Bootstrapa text-muted dla ciemnego t³a */
+.text-muted {
+  color: rgba(var(--text-rgb), var(--muted-a)) !important;
+}
+
+/* Tabele - dostosowanie do Dark Mode */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--text);
+  --bs-table-border-color: rgba(255,255,255, var(--table-border-a));
+  color: var(--text) !important;
+}
+
+  .table td,
+  .table th {
+    border-color: rgba(255,255,255, var(--table-border-a));
+  }
+
+  .table thead th {
+    color: rgba(var(--text-rgb), .92) !important;
+  }
+
+  .table tbody td {
+    color: rgba(var(--text-rgb), .88) !important;
+  }
+
+.table-responsive {
+  background: transparent !important;
+}
+
+
+/* ============================================================
+   4. PRZYCISKI (BUTTONS)
+   ============================================================ */
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  border-radius: var(--btn-radius);
+}
+
+.btn-secondary,
+.btn-danger,
+.btn-warning {
+  border-radius: var(--btn-radius);
+}
+
+/* Outline Primary - poprawiony kontrast na ciemnym tle */
+.btn-outline-primary {
+  color: rgba(var(--text-rgb), var(--navuser-a)) !important;
+  border-color: rgba(var(--accent-rgb), var(--outline-primary-border-a)) !important;
+}
+
+  .btn-outline-primary:hover {
+    background: rgba(var(--accent-rgb), var(--outline-primary-hover-bg-a)) !important;
+    /* Usuwamy domyœlne bia³e t³o hovera Bootstrapa */
+    color: #fff !important;
+  }
+
+
+/* ============================================================
+   5. NAWIGACJA I STOPKA
+   ============================================================ */
+
+/* Navbar "Glass" - pó³przezroczysty z rozmyciem */
+.nav-glass {
+  background: rgba(var(--bg1-rgb), var(--nav-a));
+  border-bottom: 1px solid rgba(255,255,255, var(--cardBorder-a));
+  box-shadow: 0 10px 30px rgba(0,0,0, var(--shadow-a));
+  backdrop-filter: blur(10px);
+}
+
+.navbar .nav-link {
+  color: rgba(var(--text-rgb), var(--navlink-a)) !important;
+  transition: color 0.2s;
+}
+
+  .navbar .nav-link:hover {
+    color: rgba(var(--text-rgb), 1) !important;
+  }
+
+.nav-username {
+  color: rgba(var(--text-rgb), var(--navuser-a));
+  transition: color 0.2s;
+}
+
+  .nav-username:hover {
+    color: rgba(var(--text-rgb), 1);
+  }
+
+/* Stopka */
+.footer {
+  color: rgba(var(--text-rgb), var(--footerText-a));
+  border-top: 1px solid rgba(255,255,255, var(--cardBorder-a));
+  background: rgba(var(--bg1-rgb), var(--footer-a));
+  backdrop-filter: blur(8px);
+  padding: 14px 0;
+}
+
+  .footer a {
+    color: rgba(var(--text-rgb), var(--footerLink-a));
+    text-decoration: none;
+  }
+
+    .footer a:hover {
+      color: rgba(var(--text-rgb), 1);
+      text-decoration: underline;
+    }
+
+
+/* ============================================================
+   6. GALERIA (KLASY G-*)
+   ============================================================ */
+
+/* Kontener g³ówny galerii na stronie szczegó³ów */
+.g-stage {
+  display: grid;
+  /* Uk³ad: Przycisk Lewy | Zdjêcie | Przycisk Prawy */
+  grid-template-columns: 52px 1fr 52px;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Ramka g³ównego zdjêcia */
+.g-frame {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255, var(--cardBorder-a));
+  background: rgba(0,0,0, var(--g-frame-bg-a));
+  cursor: pointer; /* Sugeruje, ¿e mo¿na klikn¹æ, by powiêkszyæ */
+  height: 500px;
+}
+
+.g-main {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Wype³nia ramkê przycinaj¹c nadmiar */
+  display: block;
+}
+
+/* Okr¹g³e przyciski nawigacji (strza³ki) */
+.g-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px; /* Idealne ko³o */
+  border: 1px solid rgba(255,255,255, var(--g-btn-border-a));
+  background: rgba(var(--bg1-rgb), var(--g-btn-bg-a));
+  color: rgba(var(--text-rgb), var(--g-btn-text-a));
+  font-size: 30px;
+  line-height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+  .g-btn:hover {
+    background: rgba(var(--bg1-rgb), 0.8);
+  }
+
+/* Pasek miniaturek */
+.g-thumbs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto; /* Pozwala na przewijanie, jeœli jest du¿o zdjêæ */
+  padding-bottom: 6px;
+}
+
+/* Pojedynczy przycisk miniaturki */
+.g-thumbBtn {
+  position: relative;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  opacity: var(--g-thumb-idle-a);
+  border-radius: 12px;
+  transition: opacity 0.2s;
+  cursor: pointer;
+}
+
+  .g-thumbBtn.active,
+  .g-thumbBtn:hover {
+    opacity: 1;
+  }
+
+/* Ramka wewn¹trz przycisku miniaturki */
+.g-thumbFrame {
+  display: inline-block;
+  width: 140px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 2px solid transparent; /* Rezerwuje miejsce na obramowanie */
+  transition: border-color 0.2s;
+}
+
+.g-thumbBtn.active .g-thumbFrame {
+  border: 2px solid #fff; /* Bia³a ramka dla aktywnego zdjêcia */
+}
+
+.g-thumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- Modal Galerii (Pe³ny ekran) --- */
+.g-modal {
+  background: rgba(var(--bg1-rgb), var(--modal-a));
+  border: 1px solid rgba(255,255,255, .12);
+  backdrop-filter: blur(15px);
+}
+
+/* Powiêkszenie modala na du¿ych ekranach */
+@media (min-width:1200px) {
+  #galleryModal .modal-dialog {
+    max-width: 1400px;
+  }
+}
+
+.g-lightbox {
+  position: relative;
+  margin-top: 8px;
+}
+
+/* Ramka w modalu - wiêksza wysokoœæ */
+.g-frame--modal {
+  height: min(82vh, 860px); /* Nie wiêcej ni¿ 82% ekranu lub 860px */
+  cursor: default;
+  background: transparent;
+  border: none;
+}
+
+.g-lightbox-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ca³e zdjêcie musi byæ widoczne */
+  display: block;
+}
+
+/* Strza³ki w modalu - pozycjonowanie absolutne na bokach */
+#galleryModal .g-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%); /* Idealne wyœrodkowanie w pionie */
+  z-index: 5;
+  opacity: .95;
+}
+
+  #galleryModal .g-btn[data-action="prev"] {
+    left: 14px;
+  }
+
+  #galleryModal .g-btn[data-action="next"] {
+    right: 14px;
+  }
+
+
+/* ============================================================
+   7. FORMULARZE (INPUTY W TRYBIE CIEMNYM)
+   ============================================================ */
+.form-control,
+.form-select,
+.form-check-input,
+textarea,
+input[type="text"],
+input[type="number"],
+input[type="password"] {
+  background-color: rgba(var(--bg1-rgb), var(--field-bg-a)) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(255,255,255, var(--field-border-a)) !important;
+}
+
+  .form-control::placeholder {
+    color: rgba(var(--text-rgb), var(--field-placeholder-a)) !important;
+  }
+
+  /* Stan focus (aktywny) */
+  .form-control:focus,
+  .form-select:focus {
+    background-color: rgba(var(--bg1-rgb), var(--field-bg-focus-a)) !important;
+    color: var(--text) !important;
+    border-color: rgba(var(--accent-rgb), .65) !important;
+    box-shadow: 0 0 0 .2rem rgba(var(--accent-rgb), .20) !important;
+  }
+
+  /* FIX: Autofill w Chrome zmienia t³o na bia³e/niebieskie.
+       Ten hack wymusza ciemne t³o przy u¿yciu wewnêtrznego cienia (box-shadow inset) */
+  input:-webkit-autofill,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-text-fill-color: var(--text) !important;
+    box-shadow: 0 0 0px 1000px rgba(var(--bg1-rgb), var(--field-autofill-a)) inset !important;
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
+
+/* ============================================================
+   8. STYLE POMOCNICZE (UTILITIES)
+   ============================================================ */
+
+/* Jeœli modal ma jasne t³o, tekst musi byæ ciemny - tu reset dla ciemnego motywu */
+.modal-content {
+  color: var(--text);
+}
+
+/* Link wygl¹daj¹cy jak tekst z interaktywnym podœwietleniem */
+.text-link {
+  color: inherit;
+  text-decoration: none;
+  display: inline-block;
+  /* Ujemne marginesy i padding zwiêkszaj¹ obszar klikniêcia
+       bez przesuwania tekstu w akapicie */
+  padding: 2px 6px;
+  margin: -2px -6px;
+  border-radius: 8px;
+  transition: background-color .15s ease, box-shadow .15s ease;
+}
+
+  .text-link:hover {
+    background-color: rgba(var(--accent-rgb), var(--link-hover-bg-a));
+    box-shadow: 0 0 0 1px rgba(var(--accent-rgb), var(--link-hover-ring-a));
+  }

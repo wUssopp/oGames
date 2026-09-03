@@ -1,0 +1,76 @@
+﻿@model List<oGames.Models.Game>
+
+@{
+  ViewData["Title"] = "Zarządzanie grami";
+}
+
+@* 1. NAGŁÓWEK I PRZYCISKI *@
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+  <h2 class="page-title mb-0">Zarządzanie grami</h2>
+  <div>
+    <a class="btn btn-primary shadow-sm" asp-controller="AdminGames" asp-action="AdminGamesCreate">
+      <i class="bi bi-plus-lg"></i> Dodaj grę
+    </a>
+    <a class="btn btn-secondary shadow-sm" asp-controller="Admin" asp-action="AdminPanel">
+      Powrót
+    </a>
+  </div>
+</div>
+
+@* 2. LISTA GIER (TABELA) *@
+<div class="card-soft">
+
+  @* Filtr wyszukiwania (Client-side via site.js) *@
+  <input class="form-control mb-3"
+         style="max-width: 400px;"
+         placeholder="Filtruj listę (ID, Tytuł, Cena)..."
+         data-table-filter="#adminGamesList" />
+
+  <div class="table-responsive">
+    <table class="table align-middle mb-0 table-hover" id="adminGamesList">
+      <thead>
+        <tr>
+          <th style="width: 50px;">ID</th>
+          <th>Tytuł gry</th>
+          <th>Cena</th>
+          <th class="text-end" style="min-width: 150px;">Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var g in Model)
+        {
+          <tr>
+            <td class="fw-bold text-muted">@g.Id</td>
+
+            @* Kolumna: Tytul *@
+            <td>
+              <a class="text-link fw-bold" asp-controller="Games" asp-action="Details" asp-route-id="@g.Id">
+                @g.Title
+              </a>
+            </td>
+
+            @* Kolumna: Cena *@
+            <td>@g.Price.ToString("0.00") PLN</td>
+
+            @* Kolumna: Akcje (Edycja / Usuwanie) *@
+            <td class="text-end">
+              <a class="btn btn-sm btn-warning me-1"
+                 asp-controller="AdminGames"
+                 asp-action="AdminGamesEdit"
+                 asp-route-id="@g.Id">
+                Edytuj
+              </a>
+
+              <form asp-controller="AdminGames" asp-action="AdminGamesDelete" method="post" style="display:inline;"
+                    onsubmit="return confirm('Czy na pewno chcesz usunąć grę: @g.Title? TEJ OPERACJI NIE MOŻNA COFNĄĆ!');">
+
+                <input type="hidden" name="id" value="@g.Id" />
+                <button type="submit" class="btn btn-sm btn-danger">Usuń</button>
+              </form>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

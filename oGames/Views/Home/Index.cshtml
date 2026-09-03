@@ -1,0 +1,39 @@
+﻿@{
+  ViewData["Title"] = "oGames - Sklep z grami";
+  // Zabezpieczenie: jeśli ViewBag.GameCount jest null, wstaw 0
+  var gameCount = ViewBag.GameCount ?? 0;
+  var logoPath = Url.Content("~/img/logo.png");
+}
+
+@* 1. KONTENER GŁÓWNY (WYSRODKOWANY) *@
+<div class="text-center">
+  <div class="card-soft d-inline-block p-4" style="max-width: 640px; width: 100%;">
+
+    @* 2. LOGO I TYTUŁ *@
+    <img src="@logoPath"
+         alt="oGames logo"
+         class="img-fluid d-block mx-auto mb-4"
+         style="max-height: 300px;" />
+
+    <h1 class="page-title mb-3">Witaj w oGames</h1>
+
+    @* 3. OPIS I STATYSTYKI *@
+    <p class="text-muted mb-4 fs-5">
+      Przeglądaj gry, dodawaj do koszyka, kupuj i oceniaj — a zakupione tytuły znajdziesz w profilu w bibliotece.
+    </p>
+
+    <div class="text-muted mb-4">
+      Liczba gier w bazie: <strong class="text-primary">@gameCount</strong>
+    </div>
+
+    @* 4. PRZYCISKI AKCJI *@
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a asp-controller="Games" asp-action="List" class="btn btn-primary px-4 py-2">
+        Przejdź do sklepu
+      </a>
+      <a asp-controller="Cart" asp-action="Cart" class="btn btn-secondary px-4 py-2">
+        Koszyk
+      </a>
+    </div>
+  </div>
+</div>

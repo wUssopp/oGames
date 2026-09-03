@@ -1,0 +1,55 @@
+﻿@model oGames.Models.AdminCreateUserViewModel
+
+@{
+  ViewData["Title"] = "Dodaj użytkownika";
+}
+
+@* 1. NAGLOWEK STRONY *@
+<h2 class="page-title mb-4">Dodaj użytkownika</h2>
+
+@* 2. FORMULARZ TWORZENIA UZYTKOWNIKA *@
+<div class="card-soft">
+  <form asp-controller="AdminUsers" asp-action="AdminUsersCreate" method="post" autocomplete="off">
+
+    @* Zbiorcze wyswietlanie bledow (np. "Taki uzytkownik juz istnieje") *@
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+      <label asp-for="Username" class="form-label">Nazwa użytkownika</label>
+      <input asp-for="Username" class="form-control" placeholder="Wpisz login..." />
+      <span class="text-danger small" asp-validation-for="Username"></span>
+    </div>
+
+    <div class="mb-3">
+      <label asp-for="Role" class="form-label">Rola</label>
+      <select class="form-select" asp-for="Role">
+        <option value="USER">Użytkownik (USER)</option>
+        <option value="ADMIN">Administrator (ADMIN)</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label asp-for="Password" class="form-label">Hasło</label>
+      <input class="form-control" asp-for="Password" type="password" autocomplete="new-password" />
+      <span class="text-danger small" asp-validation-for="Password"></span>
+    </div>
+
+    <div class="mb-4">
+      <label asp-for="ConfirmPassword" class="form-label">Powtórz hasło</label>
+      <input class="form-control" asp-for="ConfirmPassword" type="password" />
+      <span class="text-danger small" asp-validation-for="ConfirmPassword"></span>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary px-4" type="submit">Utwórz konto</button>
+      <a class="btn btn-secondary px-4" asp-controller="AdminUsers" asp-action="AdminUsers">Anuluj</a>
+    </div>
+  </form>
+</div>
+
+@* 3. SKRYPTY WALIDACJI (Client-Side) *@
+@section Scripts {
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
+}
