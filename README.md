@@ -22,6 +22,13 @@ A comprehensive, web-based digital game store inspired by platforms like Steam. 
 
 The project is configured to be easily runnable locally. 
 
+### 🔑 Test Accounts
+You can test the application features using the following pre-configured accounts:
+* **Admin Account** (Access to Game & User Management):
+  * Username: `admin`
+  * Password: `admin123`
+* *(You can also freely register a new standard user account from the login page).*
+
 ### Prerequisites
 * [.NET 9.0 SDK](https://dotnet.microsoft.com/download) (or compatible version) installed.
 
