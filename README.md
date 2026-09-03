@@ -23,5 +23,5 @@ A comprehensive, web-based digital game store inspired by platforms like Steam. 
 The project is configured to be easily runnable locally. 
 
 ### Prerequisites
-* [.NET 8.0 SDK](https://dotnet.microsoft.com/download) (or compatible version) installed.
+* [.NET 9.0 SDK](https://dotnet.microsoft.com/download) (or compatible version) installed.
 
